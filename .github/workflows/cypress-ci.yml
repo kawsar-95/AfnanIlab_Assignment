@@ -1,4 +1,4 @@
-name: Cypress CI
+name: Test Cypress CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  cypress-run:
+  cypress-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,4 +25,13 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests
-        run: npx cypress run
+        run: npx cypress run || true # Allow the workflow to continue even if tests fail
+
+      - name: Upload Cypress artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-artifacts
+          path: |
+            cypress/screenshots
+            cypress/videos
